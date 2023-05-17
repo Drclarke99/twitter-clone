@@ -5,7 +5,8 @@ import {HomeIcon,
         ClipboardIcon,
         BellIcon,
         UserIcon,
-        DotsCircleHorizontalIcon
+        DotsCircleHorizontalIcon,
+        DotsHorizontalIcon
     } from "@heroicons/react/outline";
 import Image from "next/image";
 
@@ -28,7 +29,18 @@ export default function Sidebar() {
                     mt-2">
                     Tweet
                 </button>
-                <div className="absolute bottom-0">User</div>
+                <div className="
+                bottom-0
+                hover:bg-white hover:bg-opacity-10 rounded-full cursor-pointer
+                absolute flex justify-center items-center xl:p-3 space-x-3">
+                    <img className="2-10 h-10 rounded-full"
+                    src="/assets/pfp.png" />
+                    <div className="hidden xl:inline">
+                        <h1 className="font-bold whitespace-nowrap">name</h1>
+                        <h1 className="text-gray-500">@username</h1>
+                    </div>
+                    <DotsHorizontalIcon className="h-5 hidden xl:inline"/>
+                </div>
             </nav>
         </div>
     )
