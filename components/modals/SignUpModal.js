@@ -1,11 +1,24 @@
 import { closeSignupModal, openSignupModal } from "@/redux/modalSlice";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 
 export default function SignUpModal() {
 
     const isOpen = useSelector(state => state.modals.signupModalOpen);
     const dispatch = useDispatch();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    async function handleSignUp() {
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth, 
+        email, 
+        password
+      );
+    }
   
     return (
     <>
@@ -42,15 +55,18 @@ export default function SignUpModal() {
                 className="h-10 mt-8 rounded-md bg-transparent border border-gray-700
                 p-6"
                 placeholder="Email"
+                onChange={e => setEmail(e.target.value)}
                 />
                 <input type={"password"} 
                 className="h-10 mt-8 rounded-md bg-transparent border border-gray-700
                 p-6"
                 placeholder="Password"
+                onChange={e => setPassword(e.target.value)}
                 />
 
                 <button className="bg-white text-black w-full font-bold text-lg mt-8
-                p-2 rounded-md">Create Account</button>
+                p-2 rounded-md"
+                onClick={handleSignUp}>Create Account</button>
             </div>
         </div>
       </Modal>
