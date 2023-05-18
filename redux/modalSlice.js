@@ -3,7 +3,15 @@ import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
     signupModalOpen: false,
     loginModalOpen: false,
-    commentModalOpen: false
+    commentModalOpen: false,
+
+    commentTweetDetails: {
+        id: null,
+        tweet: null,
+        photoUrl: null,
+        name: null,
+        username: null
+    }
 }
 
 const modalSlice = createSlice({
@@ -27,6 +35,13 @@ const modalSlice = createSlice({
     },
     closeCommentModal: (state) => {
         state.commentModalOpen = false
+    },
+    setCommentTweet: (state, action) => {
+        state.commentTweetDetails.id = action.payload.id,
+        state.commentTweetDetails.tweet = action.payload.tweet,
+        state.commentTweetDetails.photoUrl = action.payload.photoUrl,
+        state.commentTweetDetails.name = action.payload.name,
+        state.commentTweetDetails.username = action.payload.username
     }
   }
 });
@@ -36,6 +51,7 @@ export const {openSignupModal,
     openLoginModal,
     closeLoginModal,
     openCommentModal,
-    closeCommentModal} = modalSlice.actions
+    closeCommentModal,
+    setCommentTweet} = modalSlice.actions
 
 export default modalSlice.reducer

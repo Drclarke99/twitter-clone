@@ -1,3 +1,4 @@
+import { db } from "@/firebase";
 import { closeCommentModal } from "@/redux/modalSlice";
 import {
   CalendarIcon,
@@ -8,11 +9,31 @@ import {
 } from "@heroicons/react/outline";
 import { XIcon } from "@heroicons/react/solid";
 import Modal from "@mui/material/Modal";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function CommentModal() {
   const isOpen = useSelector((state) => state.modals.commentModalOpen);
+  const userImg = useSelector((state) => state.user.photoUrl);
+  const tweetDetails = useSelector((state) => state.modals.commentTweetDetails);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  const [comment, setComment] = useState("");
+
+  async function sendComment() {
+    const docRef = doc(db, "posts", tweetDetails.id);
+    const commentDetails = {
+        username: user.username,
+        name: user.name,
+        photoUrl: user.photoUrl,
+        comment: comment
+    }
+    await updateDoc(docRef, {
+        comments: arrayUnion(commentDetails)
+    })
+  }
 
   return (
     <>
@@ -43,17 +64,17 @@ export default function CommentModal() {
           <div className="mt-8">
             <div className="flex space-x-3">
               <img
-                src="/assets/kylie.png"
+                src={tweetDetails.photoUrl}
                 className="w-12 h-12 object-cover rounded-full"
               />
               <div>
                 <div className="flex space-x-1.5">
-                  <h1 className="font-bold">Kylie</h1>
-                  <h1 className="text-gray-500">@kylie</h1>
+                  <h1 className="font-bold">{tweetDetails.name}</h1>
+                  <h1 className="text-gray-500">@{tweetDetails.username}</h1>
                 </div>
-                <p className="mt-1">This is awesome</p>
+                <p className="mt-1">{tweetDetails.tweet}</p>
                 <h1 className="text-gray-500 text-[15px] mt-2">
-                  Replying to <span className="text-[#1b9bf0]">@xgs</span>
+                  Replying to <span className="text-[#1b9bf0]">@{tweetDetails.username}</span>
                 </h1>
               </div>
             </div>
@@ -62,7 +83,7 @@ export default function CommentModal() {
           <div className="mt-11">
             <div className="flex space-x-3">
               <img
-                src="/assets/kylie.png"
+                src={userImg}
                 className="w-12 h-12 object-cover rounded-full"
               />
               <div className="w-full">
@@ -71,6 +92,7 @@ export default function CommentModal() {
                   className="w-full
                     bg-transparent resize-none text-lg outline-none
                 "
+                onChange={e => setComment(e.target.value)}
                 />
 
                 <div className="pt-4 flex justify-between border-t border-gray-700">
@@ -95,6 +117,8 @@ export default function CommentModal() {
                     className="
                     bg-[#1d9bf0] rounded-full px-4 py-1.5
                     disabled:opacity-50"
+                    disabled={!comment}
+                    onClick={sendComment}
                   >
                     Tweet
                   </button>
