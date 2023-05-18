@@ -1,10 +1,24 @@
+import { auth } from "@/firebase";
 import { openLoginModal, closeLoginModal } from "@/redux/modalSlice";
 import Modal from "@mui/material/Modal";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function LoginModal() {
   const isOpen = useSelector((state) => state.modals.loginModalOpen);
   const dispatch = useDispatch();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSignIn() {
+    await signInWithEmailAndPassword(auth, email, password);
+  }
+
+  async function handleGuestSignIn() {
+    await signInWithEmailAndPassword(auth, "guest11111100@gmail.com", "123456");
+  }
 
   return (
     <>
@@ -36,17 +50,20 @@ export default function LoginModal() {
               className="h-10 mt-8 rounded-md bg-transparent border border-gray-700
                 p-6"
               placeholder="Email"
+              onChange={e => setEmail(e.target.value)}
             />
             <input
               type={"password"}
               className="h-10 mt-8 rounded-md bg-transparent border border-gray-700
                 p-6"
               placeholder="Password"
+              onChange={e => setPassword(e.target.value)}
             />
 
             <button
               className="bg-white text-black w-full font-bold text-lg mt-8
                 p-2 rounded-md"
+                onClick={handleSignIn}
             >
               Sign In
             </button>
@@ -55,6 +72,7 @@ export default function LoginModal() {
             <button
               className="bg-white text-black w-full font-bold text-lg
                 p-2 rounded-md mt-4"
+                onClick={handleGuestSignIn}
             >
               Sign In as Guest
             </button>

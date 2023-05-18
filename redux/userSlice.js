@@ -20,7 +20,7 @@ const userSlice = createSlice({
         state.photoUrl = action.payload.photoUrl
     },
 
-    signOutUser: () => {
+    signOutUser: (state) => {
         state.username = null,
         state.name = null,
         state.email = null,
