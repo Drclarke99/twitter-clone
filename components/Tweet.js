@@ -127,7 +127,9 @@ export function TweetHeader({ username, name, timestamp, text, photoUrl, image }
 
         <span>{text}</span>
 
-        {image && <img src={image}/>}
+        {image && <img 
+        className="object-cover border border-gray-700 rounded-md mt-3 max-h-80"
+        src={image}/>}
       </div>
     </div>
   );

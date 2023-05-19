@@ -20,6 +20,7 @@ export async function getServerSideProps(context) {
     text: data.tweet,
     comments: data.comments || null,
     timestamp: JSON.stringify(data.timestamp.toDate()),
+    image: data.image || null
   };
 
   return {
@@ -66,6 +67,13 @@ export default function CommentsPage({ tweetData }) {
                 </div>
 
                 <span className="text-2xl">{tweetData.text}</span>
+
+                {tweetData.image && (
+                  <img
+                    className="object-cover border border-gray-700 rounded-md mt-3 max-h-80"
+                    src={tweetData.image}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -89,7 +97,7 @@ export default function CommentsPage({ tweetData }) {
             </button>
           </div>
 
-          {tweetData.comments?.map(comment => (
+          {tweetData.comments?.map((comment) => (
             <div className="border-b border-gray-700">
               <div className="flex space-x-3 p-3 border-gray-700">
                 <img
