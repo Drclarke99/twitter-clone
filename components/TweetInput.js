@@ -1,19 +1,28 @@
 import { db, storage } from "@/firebase";
+import { openLoginModal } from "@/redux/modalSlice";
 import { CalendarIcon, ChartBarIcon, EmojiHappyIcon, LocationMarkerIcon, PhotographIcon, XIcon } from "@heroicons/react/outline";
 import { addDoc, collection, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function TweetInput() {
 
     const user = useSelector(state => state.user);
     const filePickerRef = useRef(null);
+    const dispatch = useDispatch();
 
     const [text, setText] = useState("");
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     async function sendTweet() {
+        if (!user.username) {
+            dispatch(openLoginModal());
+            return
+        }
+
+        setLoading(true);
         const docRef = await addDoc(collection(db, "posts"), {
             username: user.username,
             name: user.name,
@@ -34,6 +43,8 @@ export default function TweetInput() {
         }
 
         setText("");
+        setImage(null);
+        setLoading(false);
     }
 
     function addImagetoTweet(e) {
@@ -54,7 +65,9 @@ export default function TweetInput() {
             className="2-11 h-11 rounded-full object-cover"
             src={user.photoUrl || "/assets/twitter-logo.png"} />
 
-            <div className="w-full">
+            {loading && <h1 className="text-2xl text-gray-500">Uploading post...</h1>}
+
+            {!loading && (<div className="w-full">
                 <textarea 
                 placeholder="What's on your mind?"
                 className="bg-transparent resize-none outline-none
@@ -111,7 +124,7 @@ export default function TweetInput() {
                     disabled={!text && !image}
                     >Tweet</button>
                 </div>
-            </div>
+            </div>)}
         </div>
     )
 }
