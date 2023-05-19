@@ -10,6 +10,7 @@ import {
 import { XIcon } from "@heroicons/react/solid";
 import Modal from "@mui/material/Modal";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,6 +20,7 @@ export default function CommentModal() {
   const tweetDetails = useSelector((state) => state.modals.commentTweetDetails);
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [comment, setComment] = useState("");
 
@@ -33,6 +35,9 @@ export default function CommentModal() {
     await updateDoc(docRef, {
         comments: arrayUnion(commentDetails)
     })
+
+    dispatch(closeCommentModal());
+    router.push("/" + tweetDetails.id);
   }
 
   return (

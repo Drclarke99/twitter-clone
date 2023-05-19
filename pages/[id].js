@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { doc, getDoc } from "firebase/firestore";
 import Link from "next/link";
 import Moment from "react-moment";
+import { useSelector } from "react-redux";
 
 export async function getServerSideProps(context) {
   const id = context.query.id;
@@ -17,7 +18,7 @@ export async function getServerSideProps(context) {
     name: data.name,
     photoUrl: data.photoUrl,
     text: data.tweet,
-    comment: data.comments || null,
+    comments: data.comments || null,
     timestamp: JSON.stringify(data.timestamp.toDate()),
   };
 
@@ -29,6 +30,8 @@ export async function getServerSideProps(context) {
 }
 
 export default function CommentsPage({ tweetData }) {
+  const user = useSelector((state) => state.user);
+
   return (
     <div>
       <div className="bg-black min-h-screen text-[#E7E9EA] max-w-[1400px] mx-auto flex">
@@ -44,7 +47,7 @@ export default function CommentsPage({ tweetData }) {
             "
           >
             <Link href={"/"}>
-                <ArrowLeftIcon className="w-7 cursor-pointer" />
+              <ArrowLeftIcon className="w-7 cursor-pointer" />
             </Link>
             <h1>Tweet</h1>
           </div>
@@ -66,6 +69,44 @@ export default function CommentsPage({ tweetData }) {
               </div>
             </div>
           </div>
+
+          <div className="flex justify-between items-center border-b border-gray-700 p-2">
+            <div className="flex justify-center items-center p-1 space-x-2">
+              <img
+                className="w-12 h-12 rounded-full object-cover"
+                src={user.photoUrl}
+              />
+              <h1 className="text-2xl text-gray-500">Tweet your reply</h1>
+            </div>
+
+            <button
+              className="
+                    bg-[#1d9bf0] rounded-full px-4 py-1.5
+                    disabled:opacity-50"
+              disabled={true}
+            >
+              Reply
+            </button>
+          </div>
+
+          {tweetData.comments?.map(comment => (
+            <div className="border-b border-gray-700">
+              <div className="flex space-x-3 p-3 border-gray-700">
+                <img
+                  className="2-11 h-11 rounded-full object-cover"
+                  src={comment.photoUrl}
+                />
+                <div>
+                  <div className="text-gray-500 flex items-center space-x-2 mb-1">
+                    <h1 className="text-white font-bold">{comment.name}</h1>
+                    <span>@{comment.username}</span>
+                  </div>
+
+                  <span>{comment.comment}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
         <Trending />
       </div>
